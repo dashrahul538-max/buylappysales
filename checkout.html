@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Buylappysales Checkout</title>
+    <meta
+      name="description"
+      content="Checkout page for Buylappysales customer orders."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell checkout-shell">
+      <main class="main-content">
+        <header class="topbar">
+          <div class="brand">
+            <div class="brand-mark">B</div>
+            <div>
+              <h1>Buylappysales</h1>
+              <p>Checkout</p>
+            </div>
+          </div>
+          <div class="topbar-actions">
+            <a href="index.html" class="ghost-btn">Back to store</a>
+            <a id="cart-link" href="checkout.html" class="cart-btn" aria-label="View cart">
+              <span>🛒 Cart</span>
+              <span id="cart-count">0</span>
+            </a>
+          </div>
+        </header>
+
+        <section class="checkout-card">
+          <h2>Complete your purchase</h2>
+          <p>Fill in your details, review your cart, and scan to pay the exact amount.</p>
+
+          <div class="checkout-summary">
+            <h3>Order summary</h3>
+            <ul id="checkout-items" class="checkout-items"></ul>
+            <div class="price-row">
+              <span>Total</span>
+              <strong id="checkout-total">₹0</strong>
+            </div>
+          </div>
+
+          <form id="order-form" class="product-form">
+            <label>
+              Full name
+              <input id="customer-name" name="customerName" required placeholder="Your name" />
+            </label>
+            <label>
+              Phone number
+              <input id="customer-phone" name="phone" type="tel" required placeholder="Mobile number" />
+            </label>
+            <label>
+              Shipping address
+              <textarea id="customer-address" name="address" rows="4" required placeholder="Street, city, state"></textarea>
+            </label>
+            <button class="primary-btn full-width" type="submit">Proceed to scanner</button>
+          </form>
+        </section>
+
+        <section id="scanner-card" class="scanner-card hidden">
+          <h2>Scan to pay</h2>
+          <p>Use the scanner to complete the payment for exactly the order total.</p>
+          <div class="payment-panel">
+            <div id="payment-amount">₹0</div>
+            <button id="scan-button" class="primary-btn">Scan QR to pay exact amount</button>
+            <div id="payment-status"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

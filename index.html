@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Buylappysales | Elegant Electronics Store</title>
+    <meta
+      name="description"
+      content="Buylappysales helps you showcase electronics products with simple QR-code payment support."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-mark">B</div>
+          <div>
+            <h1>Buylappysales</h1>
+            <p>Customer store</p>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Primary navigation">
+          <a href="#home" class="active">Home</a>
+          <a href="#products">Products</a>
+          <a id="owner-panel-link" href="#dashboard" class="owner-link hidden">Owner panel</a>
+        </nav>
+
+        <div class="sidebar-copy">
+          <p>Browse available electronics or unlock the owner panel to manage products.</p>
+        </div>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div class="brand">
+            <div class="brand-mark">B</div>
+            <div>
+              <h1>Buylappysales</h1>
+              <p>Elegant electronics sales made simple</p>
+            </div>
+          </div>
+          <div class="topbar-actions">
+            <a id="cart-link" href="checkout.html" class="cart-btn" aria-label="View cart">
+              <span>🛒 Cart</span>
+              <span id="cart-count">0</span>
+            </a>
+            <button id="admin-toggle" class="ghost-btn">Admin Access</button>
+          </div>
+        </header>
+
+        <section id="home" class="hero-card">
+          <div class="hero-copy">
+            <p class="eyebrow">Premium product showcase</p>
+            <h2>Sell electronics beautifully with instant QR payment.</h2>
+            <p>
+              Upload product images, set prices in INR, and share a polished shop that helps customers browse and pay in seconds.
+            </p>
+            <div class="hero-actions">
+              <a href="#products" class="primary-btn">View Products</a>
+              <a href="#dashboard" class="secondary-btn">Open Dashboard</a>
+            </div>
+          </div>
+          <div class="hero-panel">
+            <div class="panel-badge">Owner dashboard</div>
+            <ul>
+              <li>Upload product photos</li>
+              <li>Set prices in INR</li>
+              <li>Add payment QR code</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="stats-row">
+          <div class="stat-card">
+            <strong id="product-count">0</strong>
+            <span>Live products</span>
+          </div>
+          <div class="stat-card">
+            <strong id="qr-status">Not set</strong>
+            <span>Payment QR</span>
+          </div>
+          <div class="stat-card">
+            <strong>Electronics</strong>
+            <span>Only category</span>
+          </div>
+        </section>
+
+        <section id="products" class="content-grid">
+          <div class="section-card">
+            <div class="section-title-row">
+              <h3>Customer showcase</h3>
+              <p>Products uploaded by you</p>
+            </div>
+            <div id="product-grid" class="product-grid"></div>
+          </div>
+
+          <div id="dashboard" class="section-card dashboard-card locked">
+            <div class="section-title-row">
+              <h3>Owner dashboard</h3>
+              <p>Only you can manage listings</p>
+            </div>
+
+            <div id="dashboard-lock" class="owner-locked-message">
+              <p>Owner access is required to add or update products. Click Admin Access to unlock the owner panel.</p>
+            </div>
+
+            <form id="product-form" class="product-form">
+              <label>
+                Product name
+                <input id="product-name" name="productName" required placeholder="Example: Wireless Earbuds" />
+              </label>
+              <label>
+                Price (INR)
+                <input id="product-price" name="price" required type="number" min="1" placeholder="1999" />
+              </label>
+              <label>
+                Description
+                <textarea id="product-description" name="description" rows="3" placeholder="Brief product details"></textarea>
+              </label>
+              <label>
+                Category
+                <select id="product-category" name="category" disabled>
+                  <option value="Electronics">Electronics</option>
+                </select>
+              </label>
+              <label class="file-label">
+                Product image
+                <input id="product-image" name="image" type="file" accept="image/*" required />
+              </label>
+              <button class="primary-btn full-width" type="submit">Add product</button>
+            </form>
+
+            <div class="qr-section">
+              <div class="section-title-row compact">
+                <h4>Payment QR</h4>
+                <p>Customers can pay through this</p>
+              </div>
+              <label class="file-label">
+                Upload QR code image
+                <input id="qr-image" type="file" accept="image/*" />
+              </label>
+              <div class="qr-preview">
+                <img id="qr-preview" alt="Payment QR preview" src="" />
+                <p id="qr-placeholder">No QR uploaded yet. Add your payment QR to help customers pay quickly.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="access-modal" class="modal hidden" aria-hidden="true">
+      <div class="modal-card">
+        <h3>Admin access</h3>
+        <p>Enter the owner password to manage your store.</p>
+        <input id="admin-password" type="password" placeholder="Password" />
+        <div class="modal-actions">
+          <button id="access-submit" class="primary-btn">Unlock</button>
+          <button id="access-close" class="ghost-btn">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
