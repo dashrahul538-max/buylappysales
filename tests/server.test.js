@@ -62,6 +62,36 @@ test('categories endpoint returns available categories', async () => {
   }
 });
 
+test('orders endpoint saves and returns checkout orders', async () => {
+  const server = createServer();
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const created = await makeRequest(server, '/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        customerName: 'Rahul',
+        customerPhone: '8328892646',
+        customerAddress: 'Bhubaneswar',
+        items: [{ name: 'Smartwatch Pro', price: 6999 }],
+        totalAmount: 6999
+      })
+    });
+
+    assert.equal(created.statusCode, 201);
+    const createdBody = JSON.parse(created.body);
+    assert.equal(createdBody.order.customerName, 'Rahul');
+
+    const list = await makeRequest(server, '/api/orders');
+    assert.equal(list.statusCode, 200);
+    const listBody = JSON.parse(list.body);
+    assert.ok(Array.isArray(listBody.orders));
+    assert.ok(listBody.orders.some((item) => item.customerPhone === '8328892646'));
+  } finally {
+    await closeServer(server);
+  }
+});
+
 function makeRequest(server, path, options = {}) {
   const address = server.address();
   const port = address && address.port ? address.port : 0;

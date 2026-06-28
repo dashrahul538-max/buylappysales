@@ -342,6 +342,37 @@ function readFileAsDataUrl(file) {
   });
 }
 
+async function submitOrder(orderData) {
+  try {
+    const response = await fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData)
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to save order');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+async function loadPaymentHint() {
+  try {
+    const response = await fetch('/api/payment');
+    if (!response.ok) {
+      return null;
+    }
+    return await response.json();
+  } catch (error) {
+    return null;
+  }
+}
+
 function setupCheckout() {
   if (!checkoutItems || !orderForm || !scannerCard || !paymentAmount || !scanButton || !paymentStatus) {
     updateCartCount();
@@ -384,15 +415,46 @@ function setupCheckout() {
     renderProducts();
   });
 
-  orderForm.addEventListener('submit', (event) => {
+  orderForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     if (!cart.length) {
       alert('Your cart is empty. Add a product first.');
       return;
     }
 
+    const customerName = document.getElementById('customer-name').value.trim();
+    const customerPhone = document.getElementById('customer-phone').value.trim();
+    const customerAddress = document.getElementById('customer-address').value.trim();
+
+    if (!customerName || !customerPhone || !customerAddress) {
+      alert('Please fill in your name, phone, and address.');
+      return;
+    }
+
+    const orderPayload = {
+      customerName,
+      customerPhone,
+      customerAddress,
+      items: cart,
+      totalAmount: total
+    };
+
+    const savedOrder = await submitOrder(orderPayload);
+    const paymentHint = await loadPaymentHint();
+
     scannerCard.classList.remove('hidden');
     orderForm.querySelector('button').disabled = true;
+
+    if (savedOrder) {
+      paymentStatus.innerHTML = `
+        <div class="scan-success">
+          Order saved successfully. Please complete the payment using the seller's verified UPI number.
+          ${paymentHint ? `<div class="payment-hint">${paymentHint.paymentHint}</div>` : ''}
+        </div>
+      `;
+    } else {
+      paymentStatus.innerHTML = '<div class="scan-success">Order saved locally. Please complete payment securely.</div>';
+    }
   });
 
   scanButton.addEventListener('click', () => {

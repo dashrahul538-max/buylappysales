@@ -67,11 +67,14 @@
         </section>
 
         <section id="scanner-card" class="scanner-card hidden">
-          <h2>Scan to pay</h2>
-          <p>Use the scanner to complete the payment for exactly the order total.</p>
+          <h2>Complete your payment</h2>
+          <p>Use the secure payment step below to complete the order for exactly the amount shown.</p>
           <div class="payment-panel">
-            <div id="payment-amount">₹0</div>
-            <button id="scan-button" class="primary-btn">Scan QR to pay exact amount</button>
+            <div class="payment-amount-card">
+              <span>Total due</span>
+              <div id="payment-amount">₹0</div>
+            </div>
+            <button id="scan-button" class="primary-btn">Pay via UPI</button>
             <div id="payment-status"></div>
           </div>
         </section>

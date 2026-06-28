@@ -1,10 +1,17 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const Database = require('better-sqlite3');
 
 const PORT = process.env.PORT || 3000;
 const HOST = '0.0.0.0';
 const PUBLIC_DIR = __dirname;
+const DB_PATH = path.join(__dirname, 'orders.db');
+
+const OWNER_NAME = 'Rahul Dash';
+const OWNER_PHONE = '8328892646';
+const OWNER_EMAIL = 'theprogrammer503@gmail.com';
+const OWNER_UPI_NUMBER = '9938764309';
 
 let products = [
   {
@@ -38,6 +45,41 @@ let products = [
 
 const categories = ['Electronics', 'Study essentials', 'Books & notes', 'Hostel essentials', 'Clothing & sports'];
 
+const db = new Database(DB_PATH);
+db.exec(`
+  CREATE TABLE IF NOT EXISTS orders (
+    id TEXT PRIMARY KEY,
+    customerName TEXT NOT NULL,
+    customerPhone TEXT NOT NULL,
+    customerAddress TEXT NOT NULL,
+    items TEXT NOT NULL,
+    totalAmount REAL NOT NULL,
+    createdAt TEXT NOT NULL,
+    ownerName TEXT NOT NULL,
+    ownerPhone TEXT NOT NULL,
+    ownerEmail TEXT NOT NULL
+  )
+`);
+
+function loadOrders() {
+  return db.prepare('SELECT * FROM orders ORDER BY createdAt DESC').all().map((row) => ({
+    ...row,
+    items: JSON.parse(row.items)
+  }));
+}
+
+function saveOrder(order) {
+  db.prepare(`
+    INSERT INTO orders (id, customerName, customerPhone, customerAddress, items, totalAmount, createdAt, ownerName, ownerPhone, ownerEmail)
+    VALUES (@id, @customerName, @customerPhone, @customerAddress, @items, @totalAmount, @createdAt, @ownerName, @ownerPhone, @ownerEmail)
+  `).run({
+    ...order,
+    items: JSON.stringify(order.items)
+  });
+}
+
+let orders = loadOrders();
+
 function createServer() {
   return http.createServer((req, res) => {
     const url = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
@@ -57,6 +99,56 @@ function createServer() {
     if (req.method === 'GET' && url.pathname === '/api/categories') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ categories }));
+      return;
+    }
+
+    if (req.method === 'GET' && url.pathname === '/api/orders') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ orders }));
+      return;
+    }
+
+    if (req.method === 'POST' && url.pathname === '/api/orders') {
+      let body = '';
+      req.on('data', (chunk) => {
+        body += chunk;
+      });
+      req.on('end', () => {
+        try {
+          const payload = JSON.parse(body || '{}');
+          const order = {
+            id: `order-${Date.now()}`,
+            customerName: payload.customerName || 'Anonymous',
+            customerPhone: payload.customerPhone || '',
+            customerAddress: payload.customerAddress || '',
+            items: Array.isArray(payload.items) ? payload.items : [],
+            totalAmount: Number(payload.totalAmount) || 0,
+            createdAt: new Date().toISOString(),
+            ownerName: OWNER_NAME,
+            ownerPhone: OWNER_PHONE,
+            ownerEmail: OWNER_EMAIL
+          };
+          saveOrder(order);
+          orders = loadOrders();
+          res.writeHead(201, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ order }));
+        } catch (error) {
+          res.writeHead(400, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: 'Invalid JSON body' }));
+        }
+      });
+      return;
+    }
+
+    if (req.method === 'GET' && url.pathname === '/api/payment') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        paymentHint: 'Pay via UPI to the seller number on the checkout screen.',
+        upiNumber: OWNER_UPI_NUMBER,
+        ownerName: OWNER_NAME,
+        ownerPhone: OWNER_PHONE,
+        ownerEmail: OWNER_EMAIL
+      }));
       return;
     }
 
