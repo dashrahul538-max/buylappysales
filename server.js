@@ -13,6 +13,7 @@ let products = [
     price: 6999,
     description: 'Elegant fitness tracker with AMOLED display.',
     category: 'Electronics',
+    badge: 'Trending',
     image: 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500"><rect width="800" height="500" fill="#eef5ff"/><rect x="220" y="120" width="360" height="260" rx="28" fill="white" stroke="#1f6fff" stroke-width="10"/><rect x="296" y="168" width="208" height="140" rx="24" fill="#dbeeff"/><circle cx="400" cy="240" r="46" fill="#1f6fff"/><path d="M354 240h92" stroke="white" stroke-width="12" stroke-linecap="round"/><path d="M400 194v92" stroke="white" stroke-width="12" stroke-linecap="round"/></svg>')
   },
   {
@@ -21,9 +22,21 @@ let products = [
     price: 4999,
     description: 'Immersive sound for work and travel.',
     category: 'Electronics',
+    badge: 'Quick sale',
     image: 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500"><rect width="800" height="500" fill="#f5f9ff"/><rect x="220" y="180" width="360" height="140" rx="70" fill="#ffffff" stroke="#1f6fff" stroke-width="10"/><rect x="280" y="210" width="120" height="88" rx="40" fill="#dbeeff"/><rect x="400" y="210" width="120" height="88" rx="40" fill="#dbeeff"/><rect x="268" y="160" width="264" height="40" rx="20" fill="#1f6fff"/></svg>')
+  },
+  {
+    id: 'sample-3',
+    name: 'Campus Backpack',
+    price: 2499,
+    description: 'Minimal and spacious for daily campus life.',
+    category: 'Study essentials',
+    badge: 'Campus favorite',
+    image: 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500"><rect width="800" height="500" fill="#f6fbff"/><rect x="220" y="140" width="360" height="220" rx="36" fill="#ffffff" stroke="#1f6fff" stroke-width="10"/><rect x="268" y="112" width="264" height="58" rx="24" fill="#dbeeff"/><rect x="292" y="200" width="216" height="92" rx="20" fill="#eef6ff"/></svg>')
   }
 ];
+
+const categories = ['Electronics', 'Study essentials', 'Books & notes', 'Hostel essentials', 'Clothing & sports'];
 
 function createServer() {
   return http.createServer((req, res) => {
@@ -41,6 +54,12 @@ function createServer() {
       return;
     }
 
+    if (req.method === 'GET' && url.pathname === '/api/categories') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ categories }));
+      return;
+    }
+
     if (req.method === 'POST' && url.pathname === '/api/products') {
       let body = '';
       req.on('data', (chunk) => {
@@ -55,6 +74,7 @@ function createServer() {
             price: Number(payload.price) || 0,
             description: payload.description || '',
             category: payload.category || 'Electronics',
+            badge: payload.badge || 'Fresh listing',
             image: payload.image || ''
           };
           products = [product, ...products];

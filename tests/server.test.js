@@ -48,6 +48,20 @@ test('products API returns seed data and accepts new products', async () => {
   }
 });
 
+test('categories endpoint returns available categories', async () => {
+  const server = createServer();
+  await new Promise((resolve) => server.listen(0, '127.0.0.1', resolve));
+  try {
+    const response = await makeRequest(server, '/api/categories');
+    assert.equal(response.statusCode, 200);
+    const body = JSON.parse(response.body);
+    assert.ok(Array.isArray(body.categories));
+    assert.ok(body.categories.includes('Electronics'));
+  } finally {
+    await closeServer(server);
+  }
+});
+
 function makeRequest(server, path, options = {}) {
   const address = server.address();
   const port = address && address.port ? address.port : 0;

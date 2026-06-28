@@ -33,7 +33,8 @@ const paymentAmount = document.getElementById('payment-amount');
 const scanButton = document.getElementById('scan-button');
 const paymentStatus = document.getElementById('payment-status');
 
-let products = loadProducts();
+let products = [];
+let categories = [];
 let qrImage = localStorage.getItem(QR_KEY) || '';
 
 function on(element, event, handler) {
@@ -89,6 +90,38 @@ function safeAddEventListener(element, event, handler) {
   }
 }
 
+async function bootstrapStore() {
+  try {
+    const [productsResponse, categoriesResponse] = await Promise.all([
+      fetch('/api/products'),
+      fetch('/api/categories')
+    ]);
+
+    if (productsResponse.ok) {
+      const payload = await productsResponse.json();
+      products = Array.isArray(payload.products) ? payload.products : [];
+    } else {
+      products = loadProducts();
+    }
+
+    if (categoriesResponse.ok) {
+      const payload = await categoriesResponse.json();
+      categories = Array.isArray(payload.categories) ? payload.categories : [];
+    }
+
+    if (!products.length) {
+      products = loadProducts();
+    }
+
+    saveProducts();
+    renderProducts();
+  } catch (error) {
+    products = loadProducts();
+    saveProducts();
+    renderProducts();
+  }
+}
+
 function renderProducts() {
   if (productCount) {
     productCount.textContent = products.length;
@@ -112,6 +145,10 @@ function renderProducts() {
     card.innerHTML = `
       <img src="${product.image}" alt="${product.name}" />
       <div class="product-info">
+        <div class="product-meta-row">
+          <span class="product-badge">${product.badge || 'Fresh listing'}</span>
+          <span>${product.category}</span>
+        </div>
         <h4>${product.name}</h4>
         <p>${product.description || 'Premium electronics item.'}</p>
         <div class="price-row">
@@ -366,6 +403,6 @@ function setupCheckout() {
   });
 }
 
-renderProducts();
+bootstrapStore();
 renderQr();
 setupCheckout();
