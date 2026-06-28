@@ -1,11 +1,10 @@
-# Render static site configuration
-# Deploy this repository as a static site.
-
 services:
-  - type: static
+  - type: web
     name: buylappysales
-    env: static
-    branch: main
-    buildCommand: ""
-    publishPath: "."
+    env: node
+    region: oregon
     plan: free
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /health

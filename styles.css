@@ -106,6 +106,7 @@ select {
   align-items: center;
   padding: 18px 24px;
   background: rgba(255, 255, 255, 0.76);
+  -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
   border: 1px solid var(--border);
   border-radius: 24px;
@@ -538,6 +539,10 @@ select {
 
 .dashboard-card.locked {
   opacity: 0.68;
+}
+
+.dashboard-card.hidden {
+  display: none;
 }
 
 .owner-link.hidden {

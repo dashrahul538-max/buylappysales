@@ -1,5 +1,6 @@
 const STORAGE_KEY = 'buylappysales-products';
 const QR_KEY = 'buylappysales-qr';
+const OWNER_UNLOCK_KEY = 'buylappysales-owner-unlocked';
 const ADMIN_PASSWORD = 'buylappysales';
 
 const productForm = document.getElementById('product-form');
@@ -200,19 +201,25 @@ function setOwnerLocked(isLocked) {
   }
 
   if (isLocked) {
-    dashboardCard.classList.add('locked');
+    dashboardCard.classList.add('locked', 'hidden');
     if (ownerPanelLink) ownerPanelLink.classList.add('hidden');
     if (dashboardLock) dashboardLock.style.display = 'block';
     ownerControls.forEach((control) => {
       control.disabled = true;
     });
+    localStorage.removeItem(OWNER_UNLOCK_KEY);
   } else {
-    dashboardCard.classList.remove('locked');
+    dashboardCard.classList.remove('locked', 'hidden');
     if (ownerPanelLink) ownerPanelLink.classList.remove('hidden');
     if (dashboardLock) dashboardLock.style.display = 'none';
     ownerControls.forEach((control) => {
       control.disabled = false;
     });
+    localStorage.setItem(OWNER_UNLOCK_KEY, 'true');
+  }
+
+  if (adminToggle) {
+    adminToggle.textContent = isLocked ? 'Admin Access' : 'Dashboard unlocked';
   }
 }
 
@@ -231,7 +238,8 @@ safeAddEventListener(accessSubmit, 'click', () => {
   }
 });
 
-setOwnerLocked(true);
+const ownerUnlocked = localStorage.getItem(OWNER_UNLOCK_KEY) === 'true';
+setOwnerLocked(!ownerUnlocked);
 
 if (productForm) {
   safeAddEventListener(productForm, 'submit', async (event) => {

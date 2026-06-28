@@ -1,0 +1,13 @@
+{
+  "name": "buylappysales",
+  "version": "1.0.0",
+  "description": "Deployment-ready Buylappysales storefront service",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
